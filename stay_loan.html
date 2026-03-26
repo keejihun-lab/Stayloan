@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>머물자리론 인포그래픽</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;padding:24px;color:#1a1a1a}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+.hero{background:#f0eeea;border-radius:12px;padding:20px 24px}
+.hero-title{font-size:22px;font-weight:500;margin-bottom:6px}
+.hero-sub{font-size:13px;color:#5f5e5a;line-height:1.7}
+
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{background:#f0eeea;border-radius:8px;padding:14px 16px}
+.metric-label{font-size:11px;color:#888780;margin-bottom:5px}
+.metric-value{font-size:20px;font-weight:500;line-height:1.2}
+.metric-note{font-size:11px;color:#b4b2a9;margin-top:3px}
+
+.section{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;overflow:hidden}
+.sec-head{padding:13px 18px;border-bottom:0.5px solid rgba(0,0,0,0.08);display:flex;align-items:center;gap:8px}
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sec-title{font-size:14px;font-weight:500}
+
+.row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 18px;border-bottom:0.5px solid rgba(0,0,0,0.06);gap:12px}
+.row:last-child{border-bottom:none}
+.row-key{font-size:13px;color:#888780;flex-shrink:0;min-width:95px}
+.row-val{font-size:13px;text-align:right;flex:1;line-height:1.6}
+
+.badge{display:inline-block;padding:2px 9px;border-radius:100px;font-size:11px;font-weight:500}
+.badge-r{background:#fcebeb;color:#a32d2d}
+
+.rate-grid{display:grid;grid-template-columns:1fr 1fr}
+.rate-cell{padding:14px 18px;border-bottom:0.5px solid rgba(0,0,0,0.06)}
+.rate-cell:last-child,.rate-cell:nth-last-child(2){border-bottom:none}
+.rate-cell:nth-child(odd){border-right:0.5px solid rgba(0,0,0,0.06)}
+.rate-label{font-size:11px;color:#888780;margin-bottom:5px}
+.rate-val{font-size:18px;font-weight:500}
+.rate-sub{font-size:11px;color:#b4b2a9;margin-top:3px}
+
+.flow-wrap{padding:16px 18px;display:flex;flex-direction:column}
+.flow-row{display:flex;gap:12px;align-items:flex-start}
+.flow-left{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.step-num{width:28px;height:28px;border-radius:50%;background:#E6F1FB;color:#185FA5;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center}
+.step-line{width:1.5px;background:rgba(0,0,0,0.15);flex:1;min-height:16px;margin:3px 0}
+.flow-body{padding-bottom:16px;flex:1}
+.flow-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.flow-desc{font-size:12px;color:#888780;line-height:1.6}
+.flow-tag{font-size:11px;color:#185FA5;margin-top:3px;font-weight:500}
+
+.warn-list{display:flex;flex-direction:column}
+.warn-item{display:flex;align-items:flex-start;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(0,0,0,0.06)}
+.warn-item:last-child{border-bottom:none}
+.warn-dot{width:5px;height:5px;border-radius:50%;background:#E24B4A;flex-shrink:0;margin-top:5px}
+.warn-text{font-size:13px;line-height:1.55}
+
+.tip-box{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:8px;padding:12px 16px;font-size:12px;color:#633806;line-height:1.7}
+
+.cal-section{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;overflow:hidden}
+.cal-head{padding:14px 18px;border-bottom:0.5px solid rgba(0,0,0,0.08)}
+.cal-head-title{font-size:15px;font-weight:500;margin-bottom:3px}
+.cal-head-sub{font-size:12px;color:#888780;line-height:1.6;margin-bottom:8px}
+.cal-hint{display:inline-flex;align-items:center;gap:6px;background:#E6F1FB;border:0.5px solid #378ADD;border-radius:100px;padding:4px 12px;font-size:11px;color:#185FA5}
+.cal-hint-dot{width:6px;height:6px;border-radius:50%;background:#185FA5;flex-shrink:0}
+
+.type-selector{display:flex;gap:8px;flex-wrap:wrap;padding:14px 18px;border-bottom:0.5px solid rgba(0,0,0,0.08)}
+.type-btn{padding:9px 20px;border-radius:100px;border:2px solid #B4B2A9;background:#F1EFE8;font-size:13px;color:#5F5E5A;cursor:pointer;transition:background .15s,border-color .15s,color .15s;white-space:nowrap;font-weight:400}
+.type-btn:hover{border-color:#888780;color:#2C2C2A}
+.active-new{background:#185FA5!important;border-color:#185FA5!important;color:#ffffff!important;font-weight:500!important}
+.active-exchange{background:#534AB7!important;border-color:#534AB7!important;color:#ffffff!important;font-weight:500!important}
+.active-renew{background:#3B6D11!important;border-color:#3B6D11!important;color:#ffffff!important;font-weight:500!important}
+
+.cal-body{padding:16px 18px}
+.sc-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.sc-desc{font-size:12px;color:#888780;line-height:1.6;margin-bottom:14px}
+.cal-row{display:grid;gap:10px}
+.cal-row.cols-2{grid-template-columns:repeat(2,1fr)}
+.cal-row.cols-3{grid-template-columns:repeat(3,1fr)}
+.cal-row.cols-4{grid-template-columns:repeat(4,1fr)}
+.cal-month{background:#f0eeea;border-radius:8px;padding:12px}
+.cal-month-label{font-size:10px;font-weight:500;color:#185FA5;margin-bottom:4px}
+.cal-month-name{font-size:12px;font-weight:500;margin-bottom:8px;text-align:center}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{font-size:9px;color:#b4b2a9;text-align:center;padding:1px 0;margin-bottom:2px}
+.cal-day{font-size:10px;text-align:center;padding:3px 1px;border-radius:3px;color:#888780;min-height:18px;line-height:12px}
+.cal-day.empty{background:transparent}
+.cal-day.contract{background:#C0DD97;color:#27500A;font-weight:500}
+.cal-day.apply{background:#B5D4F4;color:#0C447C;font-weight:500}
+.cal-day.select{background:#FAC775;color:#633806;font-weight:500}
+.cal-day.bank{background:#F5C4B3;color:#712B13;font-weight:500}
+.cal-day.loan{background:#CECBF6;color:#3C3489;font-weight:500}
+.cal-day.key{background:#E24B4A;color:#fff;font-weight:500;border-radius:50%}
+
+.legend{display:flex;flex-direction:column;gap:8px;margin-top:16px;background:#f0eeea;border-radius:8px;padding:14px 16px}
+.legend-title{font-size:11px;font-weight:500;color:#888780;margin-bottom:4px}
+.leg-item{display:flex;align-items:center;gap:10px}
+.leg-color{width:36px;height:22px;border-radius:4px;flex-shrink:0}
+.leg-color.contract{background:#C0DD97;border:1px solid #639922}
+.leg-color.apply{background:#B5D4F4;border:1px solid #378ADD}
+.leg-color.select{background:#FAC775;border:1px solid #EF9F27}
+.leg-color.bank{background:#F5C4B3;border:1px solid #F0997B}
+.leg-color.loan{background:#CECBF6;border:1px solid #7F77DD}
+.leg-color.key{background:#E24B4A;border-radius:50%;width:22px;height:22px;border:none}
+.leg-text{font-size:13px;flex:1}
+.leg-sub{font-size:11px;color:#888780}
+
+.info-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.info-pill{background:#f0eeea;border-radius:8px;padding:8px 14px;font-size:12px;color:#888780;line-height:1.6;flex:1;min-width:130px}
+.info-pill strong{color:#1a1a1a;font-weight:500;display:block;margin-bottom:2px}
+.warn-pill{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:8px;padding:8px 14px;font-size:12px;color:#633806;line-height:1.6;flex:1;min-width:130px}
+.warn-pill strong{font-weight:500;display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-title">머물자리론</div>
+    <div class="hero-sub">부산 청년 임차보증금 대출 및 대출이자 지원사업 · 2026년 기준<br>매월 1~10일 선착순 50명 · 부산청년플랫폼(young.busan.go.kr) 온라인 신청</div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">최대 대출한도</div><div class="metric-value">1억원</div><div class="metric-note">보증금의 90% 이내</div></div>
+    <div class="metric"><div class="metric-label">대출금리</div><div class="metric-value">최저 1.0%</div><div class="metric-note">본인 부담 (시 지원 포함 연 3.5%)</div></div>
+    <div class="metric"><div class="metric-label">신청 인원</div><div class="metric-value">월 50명</div><div class="metric-note">선착순 마감</div></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-dot" style="background:#378ADD"></div><div class="sec-title">자격 요건</div></div>
+    <div class="row"><span class="row-key">나이</span><span class="row-val">만 19~39세 (대출 실행일까지)</span></div>
+    <div class="row"><span class="row-key">주소</span><span class="row-val">신청일 기준 부산광역시 주민등록</span></div>
+    <div class="row"><span class="row-key">주택 보유</span><span class="row-val">무주택 세대주 (배우자 포함)</span></div>
+    <div class="row"><span class="row-key">소득</span><span class="row-val">본인 연 6천만원 이하 · 부부합산 연 1억원 이하</span></div>
+    <div class="row"><span class="row-key">신혼부부</span><span class="row-val"><span class="badge badge-r">신청 불가</span> 신혼부부 사업 종료 후 가능</span></div>
+    <div class="row"><span class="row-key">참여 횟수</span><span class="row-val"><span class="badge badge-r">생애 1회</span> 종료 후 재참여 불가</span></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-dot" style="background:#639922"></div><div class="sec-title">대상 주택</div></div>
+    <div class="row"><span class="row-key">소재지</span><span class="row-val">부산시 소재 주택 · 주거용 오피스텔</span></div>
+    <div class="row"><span class="row-key">보증금</span><span class="row-val">2억원 이하</span></div>
+    <div class="row"><span class="row-key">전월세전환율</span><span class="row-val">6.1% 이하</span></div>
+    <div class="row"><span class="row-key">오피스텔</span><span class="row-val">중개대상물 확인서 추가 제출 필요</span></div>
+    <div class="row"><span class="row-key">제외 주택</span><span class="row-val">행복주택·LH매입임대 등 공공임대 · 불법 건축물</span></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-dot" style="background:#378ADD"></div><div class="sec-title">대출 금리 상세</div></div>
+    <div class="rate-grid">
+      <div class="rate-cell"><div class="rate-label">연소득 45백만원 이하</div><div class="rate-val">1.0%</div><div class="rate-sub">본인 부담 (시 지원 2.5%)</div></div>
+      <div class="rate-cell"><div class="rate-label">연소득 45백만원 초과</div><div class="rate-val">1.5%</div><div class="rate-sub">본인 부담 (시 지원 2.0%)</div></div>
+      <div class="rate-cell"><div class="rate-label">이자지원 기간</div><div class="rate-val">최장 4년</div><div class="rate-sub">기본 2년 + 연장 2년</div></div>
+      <div class="rate-cell"><div class="rate-label">보증료</div><div class="rate-val">0.02%</div><div class="rate-sub">대출금 기준 · 본인 부담</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-dot" style="background:#378ADD"></div><div class="sec-title">신청 절차</div></div>
+    <div class="flow-wrap">
+      <div class="flow-row"><div class="flow-left"><div class="step-num">1</div><div class="step-line"></div></div><div class="flow-body"><div class="flow-title">임대차계약 체결</div><div class="flow-desc">보증금의 5% 이상 계약금 납부 · 확정일자 필수</div></div></div>
+      <div class="flow-row"><div class="flow-left"><div class="step-num">2</div><div class="step-line"></div></div><div class="flow-body"><div class="flow-title">온라인 신청</div><div class="flow-desc">부산청년플랫폼(young.busan.go.kr) · 서류 사진/스캔 업로드</div><div class="flow-tag">매월 1일 09:00 ~ 10일 18:00 · 선착순 50명</div></div></div>
+      <div class="flow-row"><div class="flow-left"><div class="step-num">3</div><div class="step-line"></div></div><div class="flow-body"><div class="flow-title">부산시 심사 · 선정 발표</div><div class="flow-desc">매월 15일 발표 · 문자 + 홈페이지 확인</div></div></div>
+      <div class="flow-row"><div class="flow-left"><div class="step-num">4</div><div class="step-line"></div></div><div class="flow-body"><div class="flow-title">부산은행 방문 · 대출 신청</div><div class="flow-desc">선정 후 소득 서류 등 지참해 협약은행 방문</div><div class="flow-tag">잔금일 최소 2주 전 방문 필수</div></div></div>
+      <div class="flow-row"><div class="flow-left"><div class="step-num">5</div></div><div class="flow-body" style="padding-bottom:0"><div class="flow-title">대출 실행 · 이자 지원 시작</div><div class="flow-desc">대출 실행일로부터 1개월 내 전입 완료 필수</div></div></div>
+    </div>
+  </div>
+
+  <div class="cal-section">
+    <div class="cal-head">
+      <div class="cal-head-title">신청 시기 — 2026년 4월 신청 기준 캘린더</div>
+      <div class="cal-head-sub">계약 유형에 따라 신청 시기가 다릅니다. 아래 버튼을 눌러 내 상황에 맞는 일정을 확인하세요.</div>
+      <div class="cal-hint"><div class="cal-hint-dot"></div>버튼을 클릭하면 해당 유형의 캘린더로 바뀝니다</div>
+    </div>
+    <div class="type-selector">
+      <button id="btn-new" class="type-btn" onclick="setType('new')">신규계약</button>
+      <button id="btn-exchange" class="type-btn" onclick="setType('exchange')">대환 (신규)</button>
+      <button id="btn-renew" class="type-btn" onclick="setType('renew')">갱신계약</button>
+    </div>
+    <div class="cal-body">
+      <div class="sc-title" id="sc-title"></div>
+      <div class="sc-desc" id="sc-desc"></div>
+      <div id="cal-row"></div>
+      <div class="legend" id="legend"></div>
+      <div class="info-row" id="info-row"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-dot" style="background:#E24B4A"></div><div class="sec-title">주의사항 · 지원 중단 사유</div></div>
+    <div class="warn-list">
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">대출 실행일로부터 1개월 내 전입신고 미완료 시 지원 취소</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">주민등록 주소 변경(이사) 시 지원 즉시 종료</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">주택 구입 시 구입일부터 이자 지원 중단</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">기초생활수급자 해당 시 지원 중단</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">정부·부산시 타 주거지원 사업 동시 참여 불가</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">대출 목적 외 사용 또는 허위 신청 시 전액 환수 + 위약금</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">만 39세 초과 시 기한 연장 불가</div></div>
+      <div class="warn-item"><div class="warn-dot"></div><div class="warn-text">부·모(배우자 부·모 포함)와 임대차계약한 경우 제외</div></div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    계약서 특약 추가 권장 — "부산시 청년 머물자리론 대출이 불가할 경우 본 계약은 무효로 하며 계약금을 반환한다"는 내용을 특약에 넣어두면 선정 실패 시 계약금을 보호받을 수 있습니다.
+  </div>
+
+</div>
+
+<script>
+const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DOW=['일','월','화','수','목','금','토'];
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+function firstDay(y,m){return new Date(y,m,1).getDay();}
+function applyRange(h,from,to,cls){for(let d=from;d<=to;d++)h[d]=cls;}
+
+function renderMonth(y,m,h,label){
+  const total=daysInMonth(y,m);
+  const start=firstDay(y,m);
+  let html=`<div class="cal-month">`;
+  if(label) html+=`<div class="cal-month-label">${label}</div>`;
+  html+=`<div class="cal-month-name">${y}년 ${MONTHS[m]}</div><div class="cal-days">`;
+  DOW.forEach(d=>{html+=`<div class="cal-dow">${d}</div>`;});
+  for(let i=0;i<start;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=total;d++){
+    const cls=h[d]||'';
+    html+=`<div class="cal-day ${cls}">${d}</div>`;
+  }
+  return html+`</div></div>`;
+}
+
+function legendHTML(items){
+  let html=`<div class="legend-title">색상 안내</div>`;
+  items.forEach(({cls,label,sub})=>{
+    html+=`<div class="leg-item"><div class="leg-color ${cls}"></div><div><div class="leg-text">${label}</div>${sub?`<div class="leg-sub">${sub}</div>`:''}</div></div>`;
+  });
+  return html;
+}
+
+const scenarios={
+  new:{
+    title:'신규계약 — 4월 신청 시 5월 잔금',
+    desc:'4월 1~10일에 신청하려면 잔금일이 5월이어야 합니다. 선정 후 안내에 따라 은행을 방문하세요.',
+    render:()=>{
+      const apr={};
+      applyRange(apr,1,10,'apply');
+      apr[15]='select';
+      applyRange(apr,16,30,'bank');
+      const may={};
+      applyRange(may,1,31,'loan');
+      return `<div class="cal-row cols-2">`+renderMonth(2026,3,apr,'① 신청 및 방문 (4월)')+renderMonth(2026,4,may,'② 대출 실행 (5월)')+`</div>`;
+    },
+    legend:[
+      {cls:'apply',label:'신청 기간 (1~10일, 계약서 필요)',sub:'매월 1일 09:00 ~ 10일 18:00, 선착순 50명'},
+      {cls:'select',label:'선정 발표 (15일)',sub:'문자 + 부산청년플랫폼 홈페이지 동시 발표'},
+      {cls:'bank',label:'은행 방문 추천 기간',sub:'발표 직후부터 월말까지 방문을 권장합니다'},
+      {cls:'loan',label:'대출 실행 가능 기간',sub:'은행 심사 승인 후 잔금일에 대출 실행'},
+    ],
+    info:`<div class="info-pill"><strong>4월 신청</strong>4월 1~10일 신청 / 15일 선정 발표</div><div class="warn-pill"><strong>은행 방문 추천</strong>4월 16일 ~ 4월 30일 사이 방문을 적극 권장합니다.</div>`
+  },
+  exchange:{
+    title:'대환 (신규) — 이미 입주 완료 후 기존 대출 전환',
+    desc:'잔금일·전입일 중 빠른 날이 3월이면 4월 신청 가능합니다.',
+    render:()=>{
+      const mar={}; applyRange(mar,1,31,'contract');
+      const apr={}; applyRange(apr,1,10,'apply'); apr[15]='select'; applyRange(apr,16,30,'bank');
+      const may={}; applyRange(may,1,31,'bank');
+      return `<div class="cal-row cols-3">`+renderMonth(2026,2,mar,'① 잔금·전입 (3월)')+renderMonth(2026,3,apr,'② 신청 (4월)')+renderMonth(2026,4,may,'③ 은행 방문 및 대환 (5월)')+`</div>`;
+    },
+    legend:[
+      {cls:'contract',label:'잔금일, 전입일 기준 빠른날 기준',sub:'기준일로부터 1~2개월 내 신청'},
+      {cls:'apply',label:'신청 기간 (1~10일)',sub:'부산청년플랫폼 선착순 접수'},
+      {cls:'select',label:'선정 발표 (15일)',sub:'문자 + 홈페이지 동시 발표'},
+      {cls:'bank',label:'은행 방문 및 대환 가능 기간',sub:'대환 완료 기한 내 방문 및 실행'},
+    ],
+    info:`<div class="info-pill"><strong>대환 완료 기한</strong>잔금·전입일 중 빠른 날로부터 3개월 이내 완료 필수</div>`
+  },
+  renew:{
+    title:'갱신계약 — 계약갱신일 전후 신청',
+    desc:'계약갱신일이 3월~6월 사이라면 4월에 신청 가능합니다.',
+    render:()=>{
+      const mar={}; applyRange(mar,1,31,'contract');
+      const apr={};
+      applyRange(apr,1,10,'apply');
+      apr[15]='select';
+      applyRange(apr,11,14,'contract');
+      applyRange(apr,16,30,'contract');
+      const may={}; applyRange(may,1,31,'contract');
+      const jun={}; applyRange(jun,1,30,'contract');
+      return `<div class="cal-row cols-4">`+renderMonth(2026,2,mar,'3월 만료')+renderMonth(2026,3,apr,'신청 (4월)')+renderMonth(2026,4,may,'5월 만료')+renderMonth(2026,5,jun,'6월 만료')+`</div>`;
+    },
+    legend:[
+      {cls:'contract',label:'계약 만료 예정 범위',sub:'3월~6월 사이 만료 예정자 대상'},
+      {cls:'apply',label:'신청 기간 (1~10일)',sub:'매월 초 정기 접수'},
+      {cls:'select',label:'선정 발표 (15일)',sub:'문자 + 홈페이지 동시 발표'},
+    ],
+    info:`<div class="info-pill"><strong>필수 조건</strong>전입일로부터 3개월 이상 경과 시 신청 가능</div>`
+  }
+};
+
+const activeClasses={new:'active-new',exchange:'active-exchange',renew:'active-renew'};
+
+function setType(type){
+  ['new','exchange','renew'].forEach(t=>{
+    const btn=document.getElementById('btn-'+t);
+    btn.className='type-btn';
+    if(t===type) btn.classList.add(activeClasses[t]);
+  });
+  const s=scenarios[type];
+  document.getElementById('sc-title').textContent=s.title;
+  document.getElementById('sc-desc').textContent=s.desc;
+  document.getElementById('cal-row').innerHTML=s.render();
+  document.getElementById('legend').innerHTML=legendHTML(s.legend);
+  document.getElementById('info-row').innerHTML=s.info;
+}
+
+setType('new');
+</script>
+</body>
+</html>
